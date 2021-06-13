@@ -1,0 +1,29 @@
+command /calculator [<number>] [<text>] [<number>]:
+	trigger:
+		if arg 1 is not set:
+			send "Syntax: (number) (:/X/+/-) (number)" to player
+		if arg 1 is set:
+			if arg 2 is ":":
+				if arg 3 is set:
+					set {number1::%player%} to arg 1 
+					set {number2::%player%} to arg 3
+					set {result::%player%} to {number1::%player%} * 1/{number2::%player%}
+					send title "Result:" with subtitle "%{number1::%player%}% : %{number2::%player%}% = %{result::%player%}%" to player
+			if arg 2 is "X" or "x":
+				if arg 3 is set:
+					set {number1::%player%} to arg 1 
+					set {number2::%player%} to arg 3
+					set {result::%player%} to {number1::%player%} * {number2::%player%}
+					send title "Result:" with subtitle "%{number1::%player%}% X %{number2::%player%}% = %{result::%player%}%" to player
+			if arg 2 is "+":
+				if arg 3 is set:
+					set {number1::%player%} to arg 1 
+					set {number2::%player%} to arg 3
+					set {result::%player%} to {number1::%player%} + {number2::%player%}
+					send title "Result:" with subtitle "%{number1::%player%}% + %{number2::%player%}% = %{result::%player%}%" to player
+			if arg 2 is "-":
+				if arg 3 is set:
+					set {number1::%player%} to arg 1 
+					set {number2::%player%} to arg 3
+					set {result::%player%} to {number1::%player%} - {number2::%player%}
+					send title "Result:" with subtitle "%{number1::%player%}% - %{number2::%player%}% = %{result::%player%}%" to player
