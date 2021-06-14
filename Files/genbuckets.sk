@@ -1,0 +1,114 @@
+command /genbucket:
+	trigger:
+		open chest inventory with 3 rows named "&d&lGenerator Buckets" to player
+		set slot 0 of player's current inventory to black stained glass pane named " " 
+		set slot 1 of player's current inventory to black stained glass pane named " " 
+		set slot 2 of player's current inventory to black stained glass pane named " "
+		set slot 3 of player's current inventory to black stained glass pane named " "
+		set slot 4 of player's current inventory to black stained glass pane named " "
+		set slot 5 of player's current inventory to black stained glass pane named " " 
+		set slot 6 of player's current inventory to black stained glass pane named " " 
+		set slot 7 of player's current inventory to black stained glass pane named " "
+		set slot 8 of player's current inventory to black stained glass pane named " " 
+		set slot 9 of player's current inventory to black stained glass pane named " "
+		set slot 10 of player's current inventory to black stained glass pane named " "
+		set slot 11 of player's current inventory to glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Obsidian"
+		set slot 12 of player's current inventory to black stained glass pane named " "
+		set slot 13 of player's current inventory to glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Cobblestone"
+		set slot 14 of player's current inventory to black stained glass pane named " " 
+		set slot 15 of player's current inventory to glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Sand"
+		set slot 16 of player's current inventory to black stained glass pane named " "
+		set slot 17 of player's current inventory to black stained glass pane named " "
+		set slot 18 of player's current inventory to black stained glass pane named " "
+		set slot 19 of player's current inventory to black stained glass pane named " "
+		set slot 20 of player's current inventory to black stained glass pane named " "
+		set slot 21 of player's current inventory to black stained glass pane named " "
+		set slot 22 of player's current inventory to black stained glass pane named " "
+		set slot 23 of player's current inventory to black stained glass pane named " "
+		set slot 24 of player's current inventory to black stained glass pane named " "
+		set slot 25 of player's current inventory to black stained glass pane named " "
+		set slot 26 of player's current inventory to black stained glass pane named " "
+
+on place:
+	if event-item is lava:
+		if name of player's held item is "&6&l✯ Gen - Bucket ✯ - Obsidian":
+			if player's balance is greater than or equal to 10000:
+				remove 10000 from player's balance
+				cancel event
+				set event-block to obsidian
+				loop 256 times:
+					if block loop-number above event-block is bedrock:
+						stop loop
+						stop
+					if block loop-number above event-block is air:
+						wait 20 ticks
+						set block loop-number above event-block to obsidian
+					else:
+						stop loop
+						stop
+			else:
+				cancel event
+				send "&cYou Do NOT meet the requirements to use this!" to player
+on place:
+	if event-item is lava:
+		if name of player's held item is "&6&l✯ Gen - Bucket ✯ - Sand":
+			if player's balance is greater than or equal to 5000:
+				remove 5000 from player's balance
+				cancel event
+				set event-block to sand
+				loop 256 times:
+					if block loop-number above event-block is bedrock:
+						stop loop
+						stop
+					if block loop-number above event-block is air:
+						wait 20 ticks
+						set block loop-number above event-block to sand
+					else:
+						stop loop
+						stop
+			else:
+				cancel event
+				send "&cYou Do NOT meet the requirements to use this!" to player
+
+on place:
+	if event-item is lava:
+		if name of player's held item is "&6&l✯ Gen - Bucket ✯ - Cobblestone":
+			if player's balance is greater than or equal to 2000:
+				remove 2000 from player's balance
+				cancel event
+				set event-block to cobblestone
+				loop 256 times:
+					if block loop-number above event-block is bedrock:
+						stop loop
+						stop
+					if block loop-number above event-block is air:
+						wait 20 ticks
+						set block loop-number above event-block to cobblestone
+					else:
+						stop loop
+						stop
+			else:
+				cancel event
+				send "&cYou Do NOT meet the requirements to use this!" to player
+
+on inventory click:
+	if event-slot is glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Obsidian":
+		cancel event
+		give player 1 of glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Obsidian" with lore "  &c&lType: &a&lObsidian" and "  &c&lCost: &a&l$10,000" and "  &c&lDirection: &a&lVerticle"
+		send "&6&lGen Bucket Recieved" to player
+
+on inventory click:
+	if event-slot is glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Sand":
+		cancel event
+		give player 1 of glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Sand" with lore "  &c&lType: &a&lSand" and "  &c&lCost: &a&l$5,000" and "  &c&lDirection: &a&lVerticle"
+		send "&6&lGen Bucket Recieved" to player
+
+on inventory click:
+	if event-slot is glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Cobblestone":
+		cancel event
+		give player 1 of glowing lava bucket named "&6&l✯ Gen - Bucket ✯ - Cobblestone" with lore "  &c&lType: &a&lCobblestone" and "  &c&lCost: &a&l$2,000" and "  &c&lDirection: &a&lVerticle"
+		send "&6&lGen Bucket Recieved" to player
+
+on inventory click:
+	if event-slot is black stained glass pane named " ":
+		cancel event
