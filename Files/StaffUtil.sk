@@ -1,0 +1,1333 @@
+#Creator: Skizzme_Box
+#Download: https://www.spigotmc.org/resources/staff-utilities.75748/
+#If you need any help with something to do with this skript, please say so here: https://www.spigotmc.org/threads/staff-utilities.420873/
+
+#================================================================================================#
+#                                                                                                #
+#                              S T A F F U T I L     O p t i o n s                               #
+#                                                                                                #
+#  All the options for this Skript!                                                              #
+#                                                                                                #
+#  You can change some of these as you like. Mostly the ones with the messages are change-able!  #
+#                                                                                                #
+#================================================================================================#
+	
+
+
+options:
+	punishPrefix: &8[&b&lStaff&c&lUtilities&3&lPunishments&8]
+	prefix: &8[&b&lStaff&c&lUtilities&8]&r
+	msgPrefix: "     &7&m---[&r %{_prefix}% &7&m]---&r    "
+	location: staffutil
+	reload: StaffUtil.reload #permission to reload this skript
+	version: 2.0 #DO NOT CHANGE THIS!
+
+#Join/Leave messages
+	joinmsg: &2[+] &a%player%&a has joined #change this to whatever you want!
+	leavemsg: &4[-] &c%player%&c has left #also change this to whatever you want!
+
+#StaffChat prefixes
+	SCprefix: &8[&a&lStaff&e&lChat&8]&r
+	SCserverPrefix: &7[&a&lStaff&e&lChat]&r #set this to your server prefix
+
+#StaffChat Permissions
+	seeStaffChat: StaffChat.see #allows player to see staff chat
+	typeStaffChat: StaffChat.type #allows player to type in staff chat
+	toggleprefixStaffChat: StaffChat.toggleprefix #shows player's prefix in staffchat
+	listUsersStaffChat: StaffChat.listusers #allows players to see who can see staffchat
+	noPerm: &cYou do not have permission to use this command! #No permission message
+
+#Vanish prefixes
+	VanishPrefix: &8[&9&lVanish&8]&r
+
+#Vanish Permissions
+	seeVanish: Vanish.see
+	useVanish: Vanish.use
+	otherVanish: Vanish.other
+	listVanish: Vanish.list
+
+#Clearchat options
+	CCprefix: &8[&6&lClear&8&lChat&8]
+
+#Clearchat prermissions
+	clearChat: Clearchat.clear
+
+#Mutechat options
+	CMprefix: &8[&a&lMute&9&lChat&8]
+
+#Mutechat permissions
+	muteChat: MuteChat.mute
+	CMtalk: MuteChat.talk
+	CMplayernametoggle: MuteChat.toggle-playernames
+
+#Captcha prefixes
+	CPprefix: &7&l[&2&lCAPTCHA&7&l]
+
+#Captcha Permissions
+	CPtoggle: Captcha.toggle
+	CPbypass: Captcha.bypass
+
+#Report Permissions
+	rPrefix: &7[&6&lREPORT&7]
+	rSee: Reports.see
+	reportUse: Reports.use
+
+#Invsee Permissions
+	INVprefix: &8[&e&lInv&9&lSee&8]
+	INVsee: Inventory.see
+	INVbypass: Inventory.bypass
+
+#Votekick Permissions
+	votekick_use: votekick.use
+
+#Votekick Options
+	votekick_votes: 13
+	votekick_time: 60 seconds
+	votekick_cooldown: 5 minutes
+	votekick_kick_time: 6 hours
+
+#Punishment Options
+	punishPrefix: &b&lStaff&c&lUtilities &7Punishments
+	mainColor: &b
+	secondaryColor: &7
+
+#Punishment Permissions
+	banUse: punish.ban
+	unbanUse: punish.unban
+	muteUse: punish.mute
+	unmuteUse: punish.unmute
+	kickUse: punish.kick
+	warnUse: punish.warn
+	unwarnUse: punish.unwarn
+
+#==============================================================================#
+#                                                                              #
+#                   S T A F F U T I L     S k r i p t                          #
+#                                                                              #
+#  <!> !WARNING: DO NOT CHANGE THIS IF YOU DON'T KNOW WHAT YOU ARE DOING! <!>  #
+#                                                                              #
+#==============================================================================#
+
+on join:
+	set {_player} to "%player%"
+	if {vanish.%player%} is true:	
+		set join message to ""
+	else:
+		set join message to "{@joinmsg}"
+
+on join:
+	set {staffchat.%player's uuid%} to false
+	if player does not have permission "{@CPbypass}":
+		if {CPcaptcha.confirm.server} is true:
+			set {CPcaptcha.%player%} to true
+			set {CPcaptcha.captcha.%player%} to random 5 char string from charset `a-zA-Z0-9`
+			send "{@CPprefix} &cPlease type ""%{CPcaptcha.captcha.%player%}%&c"" or move to type in chat!"
+
+on disconnect:
+	set {_player} to "%player%"
+	if {vanish.%player%} is true:
+		set leave message to ""
+	else:
+		set leave message to "{@leavemsg}"
+
+function autoUpdateSU(p: player):
+	if text from "https://pastebin.com/raw/RCqKKss3" is not "%{_version}%":
+		if {autoupdate.su} is false:
+			send "{@prefix} &cStaff Utilities needs an update! Go to https://www.spigotmc.org/resources/staff-utilities.75748/ or <link:https://www.spigotmc.org/resources/staff-utilities.75748/>&c&lCLICK HERE<reset>" to {_p}
+		else if {autoupdate.su} is true:
+			if file "plugins/Skript/scripts/{@location}.sk" does not exist:
+				send "{@prefix} &cERROR: Autoupdate failed! Please change the location of the skript to the &c&ocorrect &clocation!" to {_p}
+			else:
+				download from "https://pastebin.com/raw/ZC1aC5ai" to "plugins/Skript/scripts/{@location}.sk"
+				wait 1.5 seconds
+				execute console command "/sk reload {@location}.sk"
+				wait 1 second
+				log "{@prefix} &aAutoupdate was succesfull! Your current version of StaffUtilities: {@version}"
+				send "{@prefix} &aAutoupdate was succesfull! Your current version: {@version}" to {_p}
+	else:
+		send "{@prefix} &6Your version of StaffUtilities is up to date!" to {_p}
+
+every 10 minutes:
+	if text from "https://pastebin.com/raw/RCqKKss3" is not "%{_version}%":
+		if {autoupdate.su} is false:
+			if {autoupdate.su.notify} is true:
+				loop all players:
+					if loop-player has permission "{@reload}":
+						send "{@prefix} &cStaff Utilities needs an update! Go to https://www.spigotmc.org/resources/staff-utilities.75748/ or <link:https://www.spigotmc.org/resources/staff-utilities.75748/>&c&lCLICK HERE<reset>" to loop-player
+		else if {autoupdate.su} is true:
+			if file "plugins/Skript/scripts/{@location}.sk" does not exist:
+				loop all players:
+					if loop-player has permission "{@reload}":
+						send "{@prefix} &cERROR: Autoupdate failed! Please change the location of the skript to the &c&ocorrect &clocation!" to loop-player
+			else:
+				download from "https://pastebin.com/raw/ZC1aC5ai" to "plugins/Skript/scripts/{@location}.sk"
+				wait 1.5 seconds
+				execute console command "/sk reload {@location}.sk"
+				wait 1 second
+				log "{@prefix} &aAutoupdate was succesfull! Your current version of StaffUtilities: {@version}"
+				loop all players:
+					if loop-player has permission "{@reload}":
+						send "{@prefix} &aAutoupdate was succesfull! Your current version: {@version}" to loop-player
+
+
+on load:
+	set {_version} to "{@version}"
+	wait 1 tick
+	if text from "https://pastebin.com/raw/RCqKKss3" is not "%{_version}%":
+		if {autoupdate.su} is false:
+			if {autoupdate.su.notify} is true:
+				loop all players:
+					if loop-player has permission "{@reload}":
+						send "{@prefix} &cStaff Utilities needs an update! Go to https://www.spigotmc.org/resources/staff-utilities.75748/ or <link:https://www.spigotmc.org/resources/staff-utilities.75748/>&c&lCLICK HERE<reset>" to loop-player
+		else if {autoupdate.su} is true:
+			if file "plugins/Skript/scripts/{@location}.sk" does not exist:
+				log "{@prefix} ERROR: Autoupdate failed! Please change the location of the skript to the &c&ocorrect &clocation!"
+			else:
+				download from "https://pastebin.com/raw/ZC1aC5ai" to "plugins/Skript/scripts/{@location}.sk"
+				wait 1.5 seconds
+				execute console command "/sk reload {@location}.sk"
+				wait 1 second
+				log "{@prefix} &aAutoupdate was succesfull! Your current version of StaffUtilities: {@version}"
+				loop all players:
+					if loop-player has permission "{@reload}":
+						send "{@prefix} &aAutoupdate was succesfull! Your current version: {@version}" to loop-player
+	else:
+		log "{@prefix} Your version of StaffUtilities is up to date!"
+
+	if file "plugins/staffutil/iplogs.yml" does not exist:
+		create file "plugins/staffutil/iplogs.yml"
+		write "IP logs from Staff Utilities" at line 1 to file "plugins/staffutil/iplogs.yml"
+	if {SCshow.prefix} is not set:
+		set {SCshow.prefix} to true
+		set {staffchat.notify} to true
+		set {SC.show.player.clearchat} to false
+		set {chatMuted} to false
+		set {CPcaptcha.confirm.server} to false
+	if {autoupdate.su} is not set:
+		set {autoupdate.su} to true
+		set {autoupdate.su.notify} to true
+
+every 2 seconds:
+	loop all players:
+		if loop-player has permission "staffchat.see":
+			if {staffchatlist::*} is not set:
+				set {staffchatlist::*} to "%loop-player%"
+			else:
+				if {staffchatlist::*} does not contain "%loop-player%":
+					add loop-player to {staffchatlist::*}
+		else:
+			if {staffchatlist::*} contains "%loop-player%":
+				remove loop-player from {staffchatlist::*}
+		if {vanish.%loop-player%} is true:
+			send action bar "&a&lYou currently are in vanish!" to loop-player
+
+command /staffchat [<text>]:
+	aliases: /sc, /staffc, /schat
+	trigger:
+		if arg-1 is set:
+			if arg-1 is equal to "help":
+				set {_prefix} to "{@SCprefix}"
+				replace all "[" and "]" with "" in {_prefix}
+				send "    &7&m   [&r %{_prefix}% &fhelp list &7&m]   &r    " to player
+				send "   &b/staffchat &7- &9&ltoggles staffchat" to player
+				send "   &b/staffchat (message) &7- &9sends a message to all staff" to player
+				send "   &b/staffchat showprefix &7- &9shows player's prefix in staffchat. Requires a permission. Check the skript for a list of permissions" to player
+				send "   &b/staffchat help &7- &9Shows these messages" to player
+				send "   &b/staffchat notify bossbar &7- &9Toggles whether player's will get notified with a bossbar!" to player
+				send "   &b/staffutil info &7- &9Shows info/version of this skript" to player
+				send "    &7&m   [&r %{_prefix}% &fhelp list &7&m]   &r    " to player
+
+			else if arg-1 is equal to "show prefix":
+				if player has permission "{@toggleprefixStaffChat}":
+					if {SCshow.prefix} is true:
+						send "{@SCprefix} &cYou have disabled prefixes in staff-chat!" to player
+						set {SCshow.prefix} to false
+					else:
+						send "{@SCprefix} &aYou have enabled prefixes in staff-chat!" to player
+						set {SCshow.prefix} to true
+				else:
+					send "{@SCserverPrefix} {@noPerm}" to player
+
+			else if arg-1 is equal to "list users":
+				if player has permission "{@listUsersStaffChat}":
+					set {_prefix} to "{@SCprefix}"
+					replace all "[" and "]" with "" in {_prefix}
+					send "    &7&m   [&r %{_prefix}% &fusers &7&m]   &r    " to player
+					send "&b%{staffchatlist::*}%" to player
+				else:
+					send "{@SCserverPrefix} {@noPerm}"
+
+			else if arg-1 is equal to "notify bossbar":
+				if player has permission "{@notifyUsersStaffChat":
+					if {staffchat.notify} is true:
+						send "{@SCprefix} &cYou have disabled notifying players with a bossbar!"
+						set {staffchat.notify} to false
+					else:
+						send "{@SCprefix} &aYou have enabled notifying players with a bossbar!"
+						set {staffchat.notify} to true
+				else:
+					send "{@SCserverPrefix} {@noPerm}"
+
+			else:
+				if player has permission "{@typeStaffChat}":
+					set {_staffchat.sender} to "%player%"
+					loop all players:
+						if loop-player has permission "{@seeStaffChat}":
+							if {SCshow.prefix} is true:
+								if player's prefix does not contain "]" or "[":
+									set {_prefix} to "&7(&r%player's prefix%&7)"
+								else:
+									set {_prefix} to player's prefix
+									replace all "[" with "&7(" in {_prefix}
+									replace all "]" with "&7)" in {_prefix}
+								send "{@SCprefix} %{_prefix}% &f%{_staffchat.sender}%: &b%arg-1%" to loop-player
+							else:
+								send "{@SCprefix} &f%{_staffchat.sender}%: &b%arg-1%" to loop-player
+				else:
+					send "{@SCserverPrefix} {@noPerm}" to player
+
+		if arg-1 is not set:
+			if player has permission "{@typeStaffChat}":
+				if {staffchat.%player's uuid%} is true:
+					send "{@SCprefix} &cYou have &c&ldisabled &cstaff-chat!" to player
+					set {staffchat.%player's uuid%} to false
+					if {staffchat.notify} is true:
+						remove bossbar "staffchat.enabled.%uuid of player%"
+						create bossbar titled "&cStaff-chat has been disabled!" and id "staffchat.disabled.%uuid of player%" for player with progress 100 with colors red
+						loop 34 times:
+							set {_progress} to value of bossbar "staffchat.disabled.%uuid of player%"
+							remove 3 from {_progress}
+							set bossbar "staffchat.disabled.%uuid of player%" value to {_progress}
+							wait 1 tick
+						remove bossbar "staffchat.disabled.%uuid of player%"
+				else:
+					send "{@SCprefix} &aYou have &a&lenabled &astaff-chat!" to player
+					set {staffchat.%player's uuid%} to true
+					if {staffchat.notify} is true:
+						create bossbar titled "&aStaff-chat is enabled!" and id "staffchat.enabled.%uuid of player%" for player with progress 100 with colors green
+			else:
+				send "{@SCserverPrefix} {@noPerm}"
+
+command /staffutil [<text>]:
+	aliases: /staffutilities
+	trigger:
+		if arg-1 is equal to "info":
+			send "    &7&m---[&r {@prefix} &7&m]---&r    " to player
+			send "&a"
+			send "   &bCreator: Skizzme_Box" to player
+			send "   &bVersion: {@version}" to player
+			send "   &bDownload link: <link:https://www.spigotmc.org/resources/staff-utilities.75748/>https://www.spigotmc.org/resources/staff-utilities.75748/<reset>" to player
+			send "   &bReload location: &b{@location} &c(please change if in-correct!)" to player
+
+		else if arg-1 is not set:
+			send "    &7&m---[&r {@prefix} &7&m]---&r    " to player
+			send "&a"
+			send "   &b/staffchat help &7- &9Shows a list of staff chat commands"
+			send "   &b/staffutil info &7- &9Shows information about the current version you have"
+			send "   &b/vanishhelp &7- &9Shows a list of vanish commands"
+			send "   &b/staffutil autoupdate &7- &9Toggles the autoupdater. &cNote: Does not work on Minehut's server host!"
+			send "   &b/staffutil reload &7- &9An easier way to reload this skript if you have changed anything. Requires &9&oyou &9to put in the location in the ""options"" section at the top"
+			send "   &b/clearchat help &7- &9Shows a list of clear-chat commands"
+			send "   &b/captcha help &7- &9Shows a list of captcha commands"
+			send "   &b/inventoryhelp &7- &9Shows a list of inventory commands"
+
+		else if arg-1 is equal to "permissions":
+			set {_prefix} to "{@prefix}"
+			replace all "[" and "]" with "" in {_prefix}
+			send "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+			send "&a"
+			send "&b{@seeStaffChat} &7- &9Allows a player to see staff-chat"
+			send "&b{@typeStaffChat} &7- &9Allows a player to type in staff-chat"
+			send "&b{@toggleprefixStaffChat} &7- &9Shows all player's prefixes in staff-chat"
+			send "&b{@listUsersStaffChat} &7- &9Lists all the people that can see staff-chat"
+			send "&b{@reload} &7- &9Allows a player to reload this skript"
+			send "&b{@muteChat} &7- &9Allows a player to mute the chat"
+			send "&b{@CMtalk} &7- &9Allows a player to type when the chat is muted"
+			send "&b{@CMplayernametoggle} &7- &9Allows a player to toggle the names of player's when they do ""/mutechat"" "
+			send "&b{@seeVanish} &7- &9Allows a player to see a message when someone goes into vanish (doesn't allow them to see the person in vanish)"
+			send "&b{@useVanish} &7- &9Allows a player to use vanish"
+			send "&b{@otherVanish} &7- &9Allows a player to toggle someone else's vanish"
+			send "&b{@listVanish} &7- &9Shows a list of all people in vanish"
+			send "&b{@clearChat} &7- &9Allows the player to clear the chat"
+			send "&b{@CPtoggle} &7- &9Allows a player to toggle the captcha"
+			send "&b{@CPbypass} &7- &9Allows the player to bypass the captcha (the player doesn't have to do it)"
+			send "&b{@INVsee} &7- &9Allows a player to use this command and ""/inventory (player)"" "
+			send "&b{@INVbypass} &7- &9If you have this permission, people can not see your inventory."
+			send "&a"
+
+		else if arg-1 is equal to "reset":
+			if {SUreset.confirm.%player%} is true:
+				set {SCshow.prefix} to true
+				set {staffchat.notify} to true
+				set {SC.show.player.clearchat} to false
+				set {chatMuted} to false
+				set {leave.message} to "&c[-] &4%{_player}%&4 has left"
+				set {join.message} to "&a[+] &2%{_player}%&2 has joined"
+				set {CPcaptcha.confirm.server} to false
+				send "{@prefix} &7You have reset Staff Utilities!"
+			else:
+				set {SUreset.confirm.%player%} to true
+				send "{@prefix} &c&oAre you sure you want to reset this skript? If you are, repeat this command"
+				wait 15 seconds
+				clear {SUreset.confirm.%player%}
+
+		else if arg-1 is equal to "builtin chat":
+			if {custom.chat.su} is true:
+				set {custom.chat.su} to false
+				send "{@prefix} &cYou have disabled the built-in custom chat for Staff-Utilities!"
+			else:
+				set {custom.chat.su} to true
+				send "{@prefix} &aYou have enabled the built-in custom chat for Staff-Utilities!"
+		else if arg-1 is equal to "autoupdate":
+			if {autoupdate.su} is true:
+				set {autoupdate.su} to false
+				send "{@prefix} &cYou have disabled the Autoupdater for Staff-Utilities!"
+			else:
+				set {autoupdate.su} to true
+				send "{@prefix} &aYou have enabled the Autoupdater for Staff-Utilities!"
+
+		else if arg-1 is equal to "autoupdate notify":
+			if {autoupdate.su.notify} is true:
+				set {autoupdate.su.notify} to false
+				send "{@prefix} &cYou have disabled the Autoupdate Notifier for Staff-Utilities!"
+			else:
+				set {autoupdate.su.notify} to true
+				send "{@prefix} &aYou have enabled the Autoupdate Notifier for Staff-Utilities!"
+
+command /clearchat [<text>]:
+	aliases: /cc, /ccc, /clearc, /cclear
+	trigger:
+		if player has permission "{@clearChat}":
+			set {_prefix} to "{@CCprefix}"
+			replace all "[" and "]" with "" in {_prefix}
+			if arg-1 is not set:
+				loop 100 times:
+					broadcast "&7"
+				if {SC.show.player.clearchat} is true:
+					broadcast "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+					broadcast "&7"
+					broadcast "&cChat was cleared by %player%"
+					broadcast "&7"
+					broadcast "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+					broadcast "&8"
+				else:
+					broadcast "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+					broadcast "&7"
+					broadcast "&cChat has been cleared"
+					broadcast "&7"
+					broadcast "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+					broadcast "&8"
+			else if arg-1 is equal to "show player":
+				if {SC.show.player.clearchat} is true:
+					send "{@CCprefix} &cYou have &c&ldisabled &cshowing of players when they clear chat!" to player
+					set {SC.show.player.clearchat} to false
+				else:
+					send "{@CCprefix} &aYou have &a&lenabled &ashowing of players when the clear chat!" to player
+					set {SC.show.player.clearchat} to true
+			else if arg-1 is equal to "help":
+				send "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+				send "&a"
+				send "   &b/clearchat &7- &9Clears chat. Aliases: /ccc, /cc, /clearc, /cclear"
+				send "   &b/clearchat show player &7- &9Toggles if the ""/clearchat"" should show the player's name or not"
+				send "   &b/clearchat help &7- &9Shows these messages"
+				send "&a"
+
+on chat:
+	{votekick_response.%player%} is not true
+	if {chatMuted} is true:
+		if player does not have permission "{@CMtalk}":
+			cancel event
+			send "{@CMprefix} &cThe chat is currently muted!"
+			stop
+	if {CPcaptcha.confirm.server} is true:
+		if {listmuted::*} does not contain "%player%":
+			if {CPcaptcha.%player%} is true:
+				if message is equal to "%{CPcaptcha.captcha.%player%}%":
+					set {CPcaptcha.%player%} to false
+					send "{@CPprefix} &aYou can now type in chat!"
+					clear {CPcaptcha.captcha.%player%}
+					cancel event
+				else:
+					send "{@CPprefix} &cPlease type ""%{CPcaptcha.captcha.%player%}%&c"" or move to type in chat!"
+					cancel event
+	if {mutelist::*} contains "%player%":
+		send "{@punishPrefix} &cYou are muted! Reason: %{%player%.reasonmuted}%"
+		cancel event
+		stop
+	if {custom.chat.su} is true:
+		if message does not start with "%%":
+			if {staffchat.%player's uuid%} is not true:
+				cancel event
+				if player's prefix does not contain "[" and "]":
+					set {playerprefix.%player%} to "&7[%player's prefix%&7]"
+				else:
+					set {playerprefix.%player%} to player's prefix
+				if {whiteChatserver} is true:
+					if {whiteChat.%player%} is true:
+						broadcast "%{playerprefix.%player%}% &7%player%&7: &f%colored message%"
+					else:
+						broadcast "%{playerprefix.%player%}% %player%&7: &7%colored message%"
+				else:
+					broadcast "%{playerprefix.%player%}% %player%&7: &7%colored message%"
+	if {staffchat.%player's uuid%} is true:
+		cancel event
+		set {_staffchat.sender} to "%player%"
+		set {_message} to message
+		loop all players:
+			if loop-player has permission "{@seeStaffChat}":
+				if {SCshow.prefix} is true:
+					if player's prefix does not contain "]" or "[":
+						set {_prefix} to "&7(&r%player's prefix%&7)"
+					else:
+						set {_prefix} to player's prefix
+						replace all "[" with "&7(" in {_prefix}
+						replace all "]" with "&7)" in {_prefix}
+					send "{@SCprefix} %{_prefix}% &f%{_staffchat.sender}%: &b%{_message}%" to loop-player
+				else:
+					send "{@SCprefix} &f%{_staffchat.sender}%: &b%{_message}%" to loop-player
+	if message starts with "%%":
+		cancel event
+		set {_staffchat.sender} to "%player%"
+		set {_message} to message
+		replace all "%%" with "" in {_message}
+		loop all players:
+			if loop-player has permission "{@seeStaffChat}":
+				if {SCshow.prefix} is true:
+					if player's prefix does not contain "]" or "[":
+						set {_prefix} to "&7(&r%sender's prefix%&7)"
+					else:
+						set {_prefix} to player's prefix
+						replace all "[" with "&7(" in {_prefix}
+						replace all "]" with "&7)" in {_prefix}
+					send "{@SCprefix} %{_prefix}% &f%{_staffchat.sender}%: &b%{_message}%" to loop-player
+				else:
+					send "{@SCprefix} &f%{_staffchat.sender}%: &b%{_message}%" to loop-player
+
+on any movement:
+	if {CPcaptcha.%player%} is true:
+		set {CPcaptcha.%player%} to false
+		send "{@CPprefix} &aYou can now type in chat!"
+		clear {CPcaptcha.captcha.%player%}
+
+on join:
+	loop all players:
+		if {vanish.%loop-player%} is true:
+			hide loop-player from players
+
+command /vanish [<player>]:
+	aliases: /v, /sv, /supervanish
+	trigger:
+		if arg-1 is not set:
+			if player has permission "{@useVanish}":
+				if {vanish.%player%} is true:
+					set {vanish.%player%} to false
+					set {_player} to "%player%"
+					remove player from {vanished::*}
+					send "{@VanishPrefix} &7You have &c&ldisabled &7vanish!" to player
+					reveal player to all players
+					loop all players:
+						if loop-player has permission "{@seeVanish}":
+							if {_player} is not "%loop-player%":
+								send "{@VanishPrefix} &7%{_player}% &7has unvanished!" to loop-player
+				else:
+					set {vanish.%player%} to true
+					set {_player} to "%player%"
+					add player to {vanished::*}
+					send "{@VanishPrefix} &7You have &a&lenabled &7vanish!" to player
+					hide player from all players
+					loop all players:
+						if loop-player has permission "{@seeVanish}":
+							reveal sender to loop-player
+							if {_player} is not "%loop-player%":
+								send "{@VanishPrefix} &7%{_player}% &7has vanished!" to loop-player
+
+			else:
+				send "{@VanishPrefix} {@noPerm}" to player
+
+		else:
+			if player has permission "{@otherVanish}":
+				if {vanish.%arg-1%} is true:
+					set {vanish.%arg-1%} to false
+					set {_player} to "%arg-1%"
+					remove arg-1 from {vanished::*}
+					send "{@VanishPrefix} &7You have &c&ldisabled &7%arg-1%&7's vanish!" to player
+					hide arg-1 from all players
+					loop all players:
+						if loop-player has permission "{@seeVanish}":
+							reveal arg-1 to loop-player
+							if {_player} is not "%loop-player%":
+								send "{@VanishPrefix} &7%{_player}% &7has unvanished!" to loop-player
+				else:
+					set {vanish.%arg-1%} to true
+					add arg-1 to {vanished::*}
+					set {_player} to "%arg-1%"
+					send "{@VanishPrefix} &7You have &a&lenabled &7%arg-1%&7's vanish!" to player
+					reveal arg-1 to all players
+					loop all players:	
+						if loop-player has permission "{@seeVanish}":
+							if {_player} is not "%loop-player%":
+								send "{@VanishPrefix} &7%{_player}% &7has vanished!" to loop-player
+			else:
+				send "{@VanishPrefix} {@noPerm}" to player
+
+command /vanishlist:
+	trigger:
+		if player has permission "{@listVanish}":
+			set {_prefix} to "{@VanishPrefix}"
+			replace all "[" and "]" with "" in {_prefix}
+			if {vanished::*} is not set:
+				send "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+				send "&fNo one is in vanish!"
+			else:
+				send "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+				send "&f%{vanished::*}%"
+		else:
+			send "{@VanishPrefix} {@noPerm}"
+
+command /vanishhelp:
+	trigger:
+		set {_prefix} to "{@VanishPrefix}"
+		replace all "[" and "]" with "" in {_prefix}
+		send "    &7&m---[&r %{_prefix}% &7&m]---&r    "
+		send "   &b/vanish &7- &9toggles &9&oyour &9vanish"
+		send "   &b/vanish (player) &7- &9toggles another player's vanish"
+		send "   &b/vanishlist &7- &9Shows a list of all people in vanish"
+		send "   &b/vanishhelp &7- &9Shows these messages!"
+
+command /mutechat [<text>]:
+	permission: {@muteChat}
+	permission message: {@noPerm}
+	trigger:
+		if arg-1 is not set:
+			if {chatMuted} is false:
+				set {chatMuted} to true
+				send "{@CMprefix} &cYou have muted chat!" to player
+				if sender is console:
+					set {_sender} to "CONSOLE"
+				else:
+					set {_sender} to "%player%"
+				set {_prefix} to "{@CMprefix}"
+				replace all "[" and "]" with "" in {_prefix}
+				loop all players:
+					if "%loop-player%" is not "%{_sender}%":
+						if {showPlayer.mutechat} is true:
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+							send "&a" to loop-player
+							send "&c  Chat has been muted by %{_sender}%&c!" to loop-player
+							send "&a" to loop-player
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+						else:
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+							send "&a" to loop-player
+							send "&c  Chat has been muted!" to loop-player
+							send "&a" to loop-player
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+			else:
+				set {chatMuted} to false
+				send "{@CMprefix} &aYou have unmuted chat!" to player
+				if sender is console:
+					set {_sender} to "CONSOLE"
+				else:
+					set {_sender} to "%player%"
+				set {_prefix} to "{@CMprefix}"
+				replace all "[" and "]" with "" in {_prefix}
+				loop all players:
+					if "%loop-player%" is not "%{_sender}%":
+						if {showPlayer.mutechat} is true:
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+							send "&a" to loop-player
+							send "&a  Chat has been unmuted by %{_sender}%&a!" to loop-player
+							send "&a" to loop-player
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+							send "&a"
+						else:
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+							send "&a" to loop-player
+							send "&a  Chat has been unmuted!" to loop-player
+							send "&a" to loop-player
+							send "    &7&m---[&r %{_prefix}% &7&m]---&r    " to loop-player
+							send "&a"
+		else if arg-1 is equal to "show player":
+			if player has permission "{@CMplayernametoggle}":
+				if {showPlayer.mutechat} is true:
+					set {showPlayer.mutechat} to false
+					send "{@CMprefix} &cYou have disabled the showing of a player's name when they do ""/mutechat""!" to player
+				else:
+					set {showPlayer.mutechat} to true
+					send "{@CMprefix} &aYou have enabled the showing of a player's name when they do ""/mutechat""!" to player
+			else:
+				send "{@CMprefix} {@noPerm}"
+				play sound "entity.villager.no" with volume 1 at player
+
+command /captcha [<text>]:
+	trigger:
+		if arg-1 is not set:
+			send "{@CPprefix} &cPlease use: /captcha help or /captcha (your captcha)"
+
+		else if arg-1 is "toggle":
+			if player has permission "{@CPtoggle}":
+				if {CPcaptcha.confirm.server} is true:
+					set {CPcaptcha.confirm.server} to false
+					send "{@CPprefix} &cYou have disabled the captcha check!"
+				else:
+					set {CPcaptcha.confirm.server} to true
+					send "{@CPprefix} &aYOu have enabled the captcha check!"
+			else:
+				send "{@noPerm}"
+
+		else if arg-1 is "help":
+			set {_prefix} to "{@CPprefix}"
+			replace all "[" and "]" with "" in {_prefix}
+			send {@msgPrefix}
+			send "   &b/captcha toggle &7- &9-Toggles the captcha"
+			send "   &b/captcha help &7- &9Shows these commands"
+			send "   &b/captcha (captcha) &7- &9Allows you to do the captcha"
+			send "   &b/captcha my captcha &7- &9Tells you your current captcha"
+
+		else if arg-1 is equal to "%{CPcaptcha.captcha.%player%}%":
+			send "{@CPprefix} &aYou can now type in chat!"
+			clear {CPcaptcha.captcha.%player%}
+			clear {CPcaptcha.%player%}
+
+		else if arg-1 is equal to "my captcha":
+			if {CPcaptcha.%player%} is true:
+				send "{@CPprefix} &7Your current captcha is %{CPcaptcha.captcha.%player%}%&7. Type this in chat, move, or do /captcha (your captcha)"
+			else:
+				send "{@CPprefix} &aYou have already completed your captcha!"
+
+command /inventory [<offline player>]:
+	aliases: /inv, /openinv
+	permission: {@INVsee}
+	permission message: {@noPerm}
+	trigger:
+		if arg-1 is offline:
+			send "{@INVprefix} &c%arg-1% &cis currently offline!"
+		else:
+			if arg-1 has permission "{@INVbypass}":
+				send "{@INVprefix} &cYou cannot open %arg-1%&c's inventory" to player
+				play sound "entity.villager.no" with volume 1 at player
+			else:
+				open arg-1 to player
+				send "{@INVprefix} &aYou have opened %arg-1%&a's inventory" to player
+				play sound "block.noteblock.pling" with volume 1 and pitch 2 at players
+
+command /inventoryhelp [<text>]:
+	permission: {@INVsee}
+	permission message: {noPerm}
+	trigger:
+		set {_prefix} to "{@INVprefix}"
+		replace all "[" and "]" with "" in {_prefix}
+		if arg-1 is not set:
+			send {@msgPrefix}
+			send "&a" to player
+			send "   &b/inventory (player) &7- &9Opens the inventory of a player. Aliases: /inv, /openinv" to player
+			send "   &b/inventoryhelp &7- &9Shows these messages" to player
+		else:
+			send {@msgPrefix}
+			send "&a" to player
+			send "&b{@INVsee} &7- &9Allows a player to use this command and ""/inventory (player)""." to player
+			send "&b{@INVbypass} &7- &9If you have this permission, people can not see your inventory." to player
+
+command /whitechat [<offline player>]:
+	permission: whitechat.toggle
+	permission message: {@noPerm}
+	trigger:
+		if arg-1 is set:
+			if player has permission "whitechat.toggle.others":
+				if {whiteChat.%arg-1%} is true:
+					set {whiteChat.%arg-1%} to false
+					send "{@prefix} &cYou have disabled %arg-1%&c's whitechat!"
+				else:
+					set {whiteChat.%arg-1%} to true
+					send "{@prefix} &aYou have enabled %arg-1%&a's whitechat!"
+		else:
+			if {whiteChat.%player%} is true:
+				set {whiteChat.%player%} to false
+				send "{@prefix} &cYou have disabled your whitechat!"
+			else:
+				set {whiteChat.%player%} to true
+				send "{@prefix} &aYou have enabled your whitechat!"
+
+command /whitechatserver:
+	permission: whitechat.toggle.server
+	permission message: {@noPerm}
+	trigger:
+		if {whiteChatserver} is true:
+			set {whiteChatserver} to false
+			send "{@prefix} &cYou have disabled whitechat!"
+		else:
+			send "{@prefix} &aYou have enabled whitechat!"
+			set {whiteChatserver} to true
+
+command /report [<offline player>] [<text>]:
+	cooldown: 30 seconds
+	cooldown message: &7Please wait another &b%remaining% &7before you use this command again!
+	trigger:
+		if arg-2 is not set:
+			send "{@rPrefix} &cPlease use: /report (player) (reason)" to player
+		else:
+			if {rcooldown.%player%} is not set:
+				set {rcooldown.%player%} to false
+				wait 2 ticks
+			if {rcooldown.%player%} is false:
+				send "{@rPrefix} &bThank you for your report!" to player
+				set {rcooldown.%player%} to true
+				loop all players:
+					if loop-player has permission "{@rSee}":
+						send "&b&m                          " to loop-player
+						send "&a"
+						send "&b%sender% &7has reported a player" to loop-player
+						send "&7Player: &b%arg-1%" to loop-player
+						send "&7Reason: &b%arg-2%" to loop-player
+						send "&a"
+						send "&b&m                          " to loop-player
+				wait 20 seconds
+				clear {rcooldown.%player%}
+			else:
+				send "{@rPrefix} &cPlease do not spam this command!" to player
+
+
+function startVotekick(p: player, sender: player):
+	set {_uuid} to uuid of {_p}
+	set {_sender_uuid} to uuid of {_sender}
+	if {votekick_running} is set:
+		send "&7There is already a votekick running! Please wait for the current votekick to end." to {_sender}
+		stop
+	set {votekick_running} to {_uuid}
+	set {votekick_time} to now
+	#set {votekick_percent::%{_uuid}%} to 100/{@votekick_votes} #how much each vote will increase the bossbar
+	set {votekick_votes} to 0
+	create bossbar titled "&7Votekick %{_p}%? {@votekick_time} remaining" and id "votekick.%{_uuid}%" for all players with progress 1 with colors yellow
+	broadcast "&7Type ""Y"" for yes or ""N"" for no in chat"
+
+function endVotekick():
+	clear {votekick_time}
+	clear {votekick_votes}
+	remove bossbar "votekick.%{votekick_running}%"
+	clear {votekick_running}
+
+every second:
+	if {votekick_running} is set:
+		if difference between now and {votekick_time} >= {@votekick_time}:
+			broadcast "&7Votekicking time is up!"
+			endVotekick()
+		else:
+			set {_time} to difference between now and {votekick_time}
+			set {_time} to difference between {_time} and {@votekick_time}
+			set {_timeString} to "%{_time}%"
+			set {_time::*} to {_timeString} split at " "
+			if {_time::1} contains ".":
+				set {_time_int::*} to {_time::1} split at "."
+				set {_time_int} to {_time_int::1}
+			else:
+				set {_time_int} to {_time::1}
+			set {_time} to "%{_time_int}% %{_time::2}%"
+			set {_l} to "%{votekick_running}%" parsed as player
+			set bossbar "votekick.%{votekick_running}%" name to "&7Votekick %{_l}%? %{_time}%"
+
+on chat:
+	if {votekick_running} is set:
+		if "%message%" is "y":
+			{has_voted::*} does not contain player
+			cancel event
+			add 1 to {votekick_votes}
+			add player to {has_voted::*}
+			{votekick_votes} > -1
+			set bossbar "votekick.%{votekick_running}%" progress to (100/{@votekick_votes})*{votekick_votes}
+			if {votekick_votes} = {@votekick_votes}:
+				set {_player} to "%{votekick_running}%" parsed as player
+				ban {_player} due to "{@secondaryColor}You have been votekicked from this server and you will not be able to join for another {@votekick_kick_time}"
+				if {_player} is online:
+					kick {_player} due to "{@secondaryColor}You have been votekicked from this server and you will not be able to join for another {@votekick_kick_time}"
+				add {_player} to {banlist::*}
+				set {%{_player}%.banned} to now
+				set {%{_player}%.length} to {@votekick_kick_time}
+
+		else if "%message%" is "n":
+			{has_voted::*} does not contain player
+			cancel event
+			remove 1 from {votekick_votes}
+			add player to {has_voted::*}
+			{votekick_votes} > -1
+			set bossbar "votekick.%{votekick_running}%" progress to (100/{@votekick_votes})*{votekick_votes}
+
+command /votekick [<offline player>]:
+	#cooldown: {@votekick_cooldown}
+	#cooldown message: &7Please wait another &b%remaining% &7before you use this command again!
+	trigger:
+		if arg-1 is offline:
+			send "&7This player is not online!"
+			stop
+		startVotekick(arg-1, player)
+
+#================================================================================================#
+#                                                                                                #
+#                           S T A F F U T I L    P U N I S H M E N T S                           #
+#                                                                                                #
+#  This is the punishment section of this skript!                                                #
+#                                                                                                #
+#================================================================================================#
+
+command /ban [<offline player>] [<text>] [<timespan>]:
+	permission: {@banUse}
+	trigger:
+		if arg-1 has permission "{@banUse}":
+			if arg-1 is op:
+				send "&7This player can not be banned!"
+				stop
+			else:
+				player is not op
+				send "&7This player can not be banned!"
+				stop
+		if arg-1 is not set:
+			send "&7Please use: /ban <player> [reason] [-s] [timespan]"
+			stop
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" and "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if arg-1 is banned:
+			send "&7That player has already been banned from this server!"
+			stop
+		if arg-3 is not set:
+			set {_time} to "FOREVER"
+		else:
+			set {_time} to arg-3
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if {_isSilent} is not true:
+			broadcast "   &f&m    [&r {@punishPrefix} &f&m]    &r   "
+			broadcast "&a "
+			broadcast "{@mainColor}    %arg-1% {@secondaryColor}has been banned from this server"
+			broadcast "{@mainColor}    Reason: {@secondaryColor}%{_reason}%"
+			broadcast "{@mainColor}    Author: {@secondaryColor}%{_sender}%"
+			broadcast "{@mainColor}    Expiry: {@secondaryColor}%{_time}%"
+			broadcast "{@mainColor}    Date: {@secondaryColor}%now%"
+			broadcast "&a "
+			broadcast "   &f&m    [&r {@punishPrefix} &f&m]    &r   "
+		else:   
+			loop all players:
+				if loop-player has permission "ban.use":
+					send "   &f&m    [&r {@punishPrefix} &f&m]    &r   " to loop-player
+					send "&a " to loop-player
+					send "{@mainColor}    %arg-1% {@secondaryColor}has been banned from this server" to loop-player
+					send "{@mainColor}    Reason: {@secondaryColor}%{_reason}%" to loop-player
+					send "{@mainColor}    Author: {@secondaryColor}%{_sender}%" to loop-player
+					send "{@mainColor}    Expiry: {@secondaryColor}%{_time}%" to loop-player
+					send "{@mainColor}    Date: {@secondaryColor}%now%" to loop-player
+					send "&c&o    SILENT" to loop-player
+					send "&a " to loop-player
+					send "   &f&m    [&r {@punishPrefix} &f&m]    &r   " to loop-player
+		ban arg-1 due to "{@secondaryColor}You have been banned from this server! %nl% {@mainColor}Reason: {@secondaryColor}%{_reason}% %nl% {@secondaryColor}Length: {@secondaryColor}%arg-3%"
+		if arg-1 is online:
+			kick arg-1 due to "{@secondaryColor}You have been banned from this server! %nl% {@mainColor}Reason: {@secondaryColor}%{_reason}% %nl% {@secondaryColor}Length: {@secondaryColor}%arg-3%"
+		add arg-1 to {banlist::*}
+		set {%arg-1%.banned} to now
+		set {%arg-1%.length} to arg-3
+
+command /unban [<offline player>] [<text>]:
+	permission: {@unbanUse}
+	trigger:
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if arg-1 is not banned:
+			send "&7This player is not banned!"
+			stop
+		if arg-1 is not set:
+			send "&7Please use: /unban (player) (reason) [-s]"
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" and "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if {_isSilent} is not true:
+			broadcast "{@mainColor}%{_sender}% {@secondaryColor}unbanned {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%"
+		else:
+			loop all players:
+				if loop-player has permission "{@unbanUse}":
+					send "&c&oSILENT {@mainColor}%{_sender}% {@secondaryColor}unbanned {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%" to loop-player
+		unban arg-1
+		clear {%arg-1%.banned}
+		clear {%arg-1%.length}
+		remove arg-1 from {banlist::*}
+
+command /mute [<offline player>] [<text>] [<timespan>]:
+	permission: {@muteUse}
+	trigger:
+		if arg-1 has permission "{@muteUse}":
+			if arg-1 is op:
+				send "&7This player can not be muted!"
+				stop
+			else:
+				player is not op
+				send "&7This player can not be muted!"
+				stop
+		if arg-1 is not set:
+			send "&7Please use: /mute <player> [reason] [-s] [timespan]"
+			stop
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" and "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if {mutelist::*} contains arg-1:
+			send "&7That player has already been muted on this server!"
+			stop
+		if arg-3 is not set:
+			set {_time} to "FOREVER"
+		else:
+			set {_time} to arg-3
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if {_isSilent} is not true:
+			broadcast "   &f&m    [&r {@punishPrefix} &f&m]    &r   "
+			broadcast "&a "
+			broadcast "{@mainColor}    %arg-1% {@secondaryColor}has been muted"
+			broadcast "{@mainColor}    Reason: {@secondaryColor}%{_reason}%"
+			broadcast "{@mainColor}    Author: {@secondaryColor}%{_sender}%"
+			broadcast "{@mainColor}    Expiry: {@secondaryColor}%{_time}%"
+			broadcast "{@mainColor}    Date: {@secondaryColor}%now%"
+			broadcast "&a "
+			broadcast "   &f&m    [&r {@punishPrefix} &f&m]    &r   "
+		else:   
+			loop all players:
+				if loop-player has permission "{@muteUse}":
+					send "   &f&m    [&r {@punishPrefix} &f&m]    &r   " to loop-player
+					send "&a " to loop-player
+					send "{@mainColor}    %arg-1% {@secondaryColor}has been muted" to loop-player
+					send "{@mainColor}    Reason: {@secondaryColor}%{_reason}%" to loop-player
+					send "{@mainColor}    Author: {@secondaryColor}%{_sender}%" to loop-player
+					send "{@mainColor}    Expiry: {@secondaryColor}%{_time}%" to loop-player
+					send "{@mainColor}    Date: {@secondaryColor}%now%" to loop-player
+					send "&c&o    SILENT" to loop-player
+					send "&a " to loop-player
+					send "   &f&m    [&r {@punishPrefix} &f&m]    &r   " to loop-player
+		add arg-1 to {mutelist::*}
+		set {%arg-1%.reasonmuted} to {_reason}
+		set {%arg-1%.muted} to now
+		set {%arg-1%.mutelength} to arg-3
+
+command /unmute [<offline player>] [<text>]:
+	permission: {@unmuteUse}
+	trigger:
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if {mutelist::*} does not contain arg-1:
+			send "&7This player is not muted!"
+			stop
+		if arg-1 is not set:
+			send "&7Please use: /unmute (player) (reason) [-s]"
+			stop
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" and "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if {_isSilent} is not true:
+			broadcast "{@mainColor}%{_sender}% {@secondaryColor}unmuted {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%"
+		else:
+			loop all players:
+				if loop-player has permission "{@unmuteUse}":
+					send "&c&oSILENT {@mainColor}%{_sender}% {@secondaryColor}unmuted {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%" to loop-player
+		remove arg-1 from {mutelist::*}
+		clear {%arg-1%.muted}
+		clear {%arg-1%.mutelength}
+
+command /kick [<player>] [<text>]:
+	permission: {@kickUse}
+	trigger:
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if arg-1 is not set:
+			send "&7Please use: /kick (player) (reason) [-s]"
+			stop
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" or "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if {_isSilent} is not true:
+			broadcast "{@mainColor}%{_sender}% {@secondaryColor}kicked {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%"
+		else:
+			loop all players:
+				if loop-player has permission "{@kickUse}":
+					send "&c&o {@mainColor}%{_sender}% {@secondaryColor}unmuted {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%" to loop-player
+		kick arg-1 due to "&7You have been kicked from this server due to {@mainColor}%{_reason}%"
+
+command /warn [<offline player>] [<text>]:
+	permission: {@warnUse}
+	trigger:
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if arg-1 is not set:
+			send "&7Please use: /warn (player) (reason) [-s]"
+			stop
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" or "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if {_isSilent} is not true:
+			broadcast "{@mainColor}%{_sender}% {@secondaryColor}warned {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%"
+		else:
+			loop all players:
+				if loop-player has permission "{@warnUse}":
+					send "&c&oSILENT {@mainColor}%{_sender}% {@secondaryColor}warned {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%" to loop-player
+		set {warns::%arg-1's uuid%} to 0 if {warns::%arg-1's uuid%} is not set 
+		add 1 to {warns::%arg-1's uuid%}
+
+command /unwarn [<offline player>] [<text>]:
+	permission: {@unwarnUse}
+	trigger:
+		set {warns::%arg-1's uuid%} to 0 if {warns::%arg-1's uuid%} is not set 
+		if player is not set:
+			set {_sender} to "CONSOLE"
+		else:
+			set {_sender} to "%player%"
+		if {warns::%arg-1's uuid%} < 1:
+			send "&7This player has no warns!"
+			stop
+		if arg-1 is not set:
+			send "&7Please use: /warn (player) (reason) [-s]"
+			stop
+		if arg-2 is not set:
+			set {_reason} to "N/A"
+		else:
+			set {_reason} to arg-2
+			if {_reason} contains "-s":
+				replace all " -s" or "-s" with "" in {_reason}
+				set {_isSilent} to true
+		if {_isSilent} is not true:
+			broadcast "{@mainColor}%{_sender}% {@secondaryColor}unwarned {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%"
+		else:
+			loop all players:
+				if loop-player has permission "{@warnUse}":
+					send "&c&oSILENT {@mainColor}%{_sender}% {@secondaryColor}unwarned {@mainColor}%arg-1% {@secondaryColor}&7for {@mainColor}%{_reason}%" to loop-player
+		remove 1 from {warns::%arg-1's uuid%}
+
+every 5 second:
+	loop {mutelist::*}:
+		if difference between now and {%loop-value%.muted} is more than {%loop-value%.mutelength}:
+			clear {%loop-value%.muted}
+			clear {%loop-value%.mutelength}
+			remove loop-value from {mutelist::*}
+			clear {%loop-value%.reasonmuted}
+	loop {banlist::*}:
+		if difference between now and {%loop-value%.banned} is more than {%loop-value%.length}:
+			clear {%loop-value%.banned}
+			clear {%loop-value%.length}
+			unban loop-value
+			remove loop-value from {banlist::*}
+
+command /punish [<offline player>]:
+	permission: punish.use
+	trigger:
+		if arg-1 is not set:
+			send "&7Please use: /punish (player)"
+			stop
+		punishGUI(player, arg-1)
+
+function punishGUI(p: player, arg1: offline player):
+	open virtual chest inventory with size 3 named "&c%{_arg1}%" to {_p}
+	loop all integers between 0 and 27:
+		format gui slot loop-number of {_p} with black stained glass pane named "&r"
+	format gui slot 11 of {_p} with iron sword named "&cCombat Modifications" to run:
+		combatMods({_p}, {_arg1})
+		play sound "ui.button.click" at {_p} for {_p}
+	format gui slot 13 of {_p} with leather boots named "&cMovement Modifications" to run:
+		movementMods({_p}, {_arg1})
+		play sound "ui.button.click"
+	format gui slot 15 of {_p} with name tag named "&cChat Offences" to run:
+		chatOffences({_p}, {_arg1})
+
+function combatMods(p: player, arg1: offline player):
+	open virtual chest inventory with size 5 named "&c%{_arg1}%" to {_p}
+	loop all integers between 0 and 45:
+		format gui slot loop-number of {_p} with black stained glass pane named "&r"
+	if {silentPunish.%{_p}%} is true:
+		format gui slot 19 of {_p} with iron sword named "&7Autoclicker" with lore "&7&o3 days (Ban)" and "&c&oSilent" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% Autoclicker/Combat Modifications -s 3 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 21 of {_p} with blaze rod named "&7Reach" with lore "&7&o5 days (Ban)" and "&c&oSilent" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% Reach/Combat Modifications -s 5 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 23 of {_p} with dragon's breath named "&7Killaura" with lore "&7&o7 days (Ban)" and "&c&oSilent" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% Killaura/Combat Modifications -s 7 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 25 of {_p} with wither skeleton skull named "&7TP-Aura" with lore "&7&o10 days (Ban)" and "&c&oSilent" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% TP-Aura/Combat Modifications -s 7 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 40 of {_p} with glowing barrier named "&cSilent" with lore "&a&oENABLED" to run:
+			play sound "ui.button.click" at {_p} for {_p}
+			set {silentPunish.%{_p}%} to false
+			combatMods({_p}, {_arg1})
+	else:
+		format gui slot 19 of {_p} with iron sword named "&7Autoclicker" with lore "&7&o3 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% Autoclicker/Combat Modifications 3 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 21 of {_p} with blaze rod named "&7Reach" with lore "&7&o5 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% Reach/Combat Modifications 5 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 23 of {_p} with dragon's breath named "&7Killaura" with lore "&7&o7 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% Killaura/Combat Modifications 7 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 25 of {_p} with wither skeleton skull named "&7TP-Aura" with lore "&7&o10 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute command "/ban %{_arg1}% TP-Aura/Combat Modifications 7 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 40 of {_p} with barrier named "&cSilent" with lore "&c&oDISABLED" to run:
+			play sound "ui.button.click" at {_p} for {_p}
+			set {silentPunish.%{_p}%} to true
+			combatMods({_p}, {_arg1})
+	format gui slot 36 of {_p} with paper named "&cBack" with lore "&7&oTakes you back to the main page" to run:
+		play sound "ui.button.click" at {_p} for {_p}
+		punishGUI({_p}, {_arg1})
+
+function movementMods(p: player, arg1: offline player):
+	open virtual chest inventory with size 5 named "&c%{_arg1}%" to {_p}
+	loop all integers between 0 and 45:
+		format gui slot loop-number of {_p} with black stained glass pane named "&r"
+	format gui slot 36 of {_p} with paper named "&cBack" with lore "&7&oTakes you back to the main page" to run:
+		play sound "ui.button.click" at {_p} for {_p}
+		punishGUI({_p}, {_arg1})
+	if {silentPunish.%{_p}%} is not false:
+		format gui slot 19 of {_p} with iron boots named "&7Speed" with lore "&7&o5 days" and "&c&oSILENT" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Speed/Movement Modifications -s 5 days (Ban)"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 21 of {_p} with diamond boots named "&7Bunnyhop" with lore "&7&o7 days (Ban)" and "&c&oSILENT" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Bunnyhop/Movement Modifications -s 7 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 23 of {_p} with observer named "&7Blink" with lore "&7&o8 days (Ban)" and "&c&oSILENT" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Blink/Movement Modifications -s 8 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 25 of {_p} with ender pearl named "&7Teleportation" with lore "&7&o9 days (Ban)" and "&c&oSILENT" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Teleportation/Movement Modifications -s 9 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+
+		format gui slot 40 of {_p} with glowing barrier named "&cSilent" with lore "&a&oENABLED" to run:
+			play sound "ui.button.click" at {_p} for {_p}
+			set {silentPunish.%{_p}%} to false
+			movementMods({_p}, {_arg1})
+	else:
+		format gui slot 19 of {_p} with iron boots named "&7Speed" with lore "&7&o5 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Speed/Movement Modifications 5 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 21 of {_p} with diamond boots named "&7Bunnyhop" with lore "&7&o7 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Bunnyhop/Movement Modifications 7 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 23 of {_p} with observer named "&7Blink" with lore "&7&o8 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Blink/Movement Modifications 8 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 25 of {_p} with ender pearl named "&7Teleportation" with lore "&7&o9 days (Ban)" to run:
+			close {_p}'s inventory
+			make {_p} execute "/ban %{_arg1}% Teleportation/Movement Modifications 9 days"
+			play sound "ui.button.click" at {_p} for {_p}
+
+		format gui slot 40 of {_p} with barrier named "&cSilent" with lore "&c&oDISABLED" to run:
+			play sound "ui.button.click" at {_p} for {_p}
+			set {silentPunish.%{_p}%} to true
+			movementMods({_p}, {_arg1})
+
+function chatOffences(p: player, arg1: offline player):
+	open virtual chest inventory with size 5 named "&c%{_arg1}%" to {_p}
+	loop all integers between 0 and 45:
+		format gui slot loop-number of {_p} with black stained glass pane named "&r"
+	format gui slot 36 of {_p} with paper named "&cBack" with lore "&7&oTakes you back to the main page" to run:
+		play sound "ui.button.click" at {_p} for {_p}
+		punishGUI({_p}, {_arg1})
+	if {silentPunish.%{_p}%} is true:
+		format gui slot 19 of {_p} with repeater named "&7Spam" with lore "&7&o1 day (Mute)" and "&c&oSILENT" to run:
+			make {_p} execute command "/mute %{_arg1}% Spam -s 1 day"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 21 of {_p} with comparator named "&7Flooding" with lore "&7&o1 day (Mute)" and "&c&oSILENT" to run:
+			make {_p} execute command "/mute %{_arg1}% Swearing -s 1 day"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 23 of {_p} with name tag named "&7Swearing" with lore "&7&o3 days (Mute)" and "&c&oSILENT" to run:
+			make {_p} execute command "/mute %{_arg1}% Swearing -s 3 days"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 25 of {_p} with name tag named "&7Slurs" with lore "&7&o2 weeks (Mute)" and "&c&oSILENT" to run:
+			make {_p} execute command "/mute %{_arg1}% Slurs -s 2 weeks"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 40 of {_p} with barrier named "&cSilent" with lore "&a&oENABLED" to run:
+			play sound "ui.button.click" at {_p} for {_p}
+			set {silentPunish.%{_p}%} to false
+			chatOffences({_p}, {_arg1})
+	else:
+		format gui slot 19 of {_p} with repeater named "&7Spam" with lore "&7&o1 day (Mute)" to run:
+			make {_p} execute command "/mute %{_arg1}% Spam 1 day"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 21 of {_p} with comparator named "&7Flooding" with lore "&7&o1 day (Mute)" to run:
+			make {_p} execute command "/mute %{_arg1}% Spam 1 day"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 23 of {_p} with name tag named "&7Swearing" with lore "&7&o3 days (Mute)" to run:
+			make {_p} execute command "/mute %{_arg1}% Swearing 3 days"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 25 of {_p} with name tag named "&7Slurs" with lore "&7&o2 weeks (Mute)" to run:
+			make {_p} execute command "/mute %{_arg1}% Slurs 2 weeks"
+			play sound "ui.button.click" at {_p} for {_p}
+			close {_p}'s inventory
+		format gui slot 40 of {_p} with barrier named "&cSilent" with lore "&c&oDISABLED" to run:
+			play sound "ui.button.click" at {_p} for {_p}
+			set {silentPunish.%{_p}%} to true
+			chatOffences({_p}, {_arg1})
