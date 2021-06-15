@@ -1,0 +1,350 @@
+#
+#Copyright 2021-2021 all rights claimed by " imToniQX#0165 "
+#
+ 
+ 
+#░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+#░░░█████░░░█████░░███░░░██░███████░██░░██████░░██░░░░██░██████░░░█████░░████████░██░░█████░░███░░░██░░
+#░░██░░░██░██░░░██░████░░██░██░░░░░░██░██░░░░░░░██░░░░██░██░░░██░██░░░██░░░░██░░░░██░██░░░██░████░░██░░
+#░░██░░░░░░██░░░██░██░██░██░█████░░░██░██░░░██░░██░░░░██░██████░░███████░░░░██░░░░██░██░░░██░██░██░██░░
+#░░██░░░██░██░░░██░██░░████░██░░░░░░██░██░░░░██░██░░░░██░██░░░██░██░░░██░░░░██░░░░██░██░░░██░██░░████░░
+#░░░█████░░░█████░░██░░░███░██░░░░░░██░░██████░░░██████░░██░░░██░██░░░██░░░░██░░░░██░░█████░░██░░░███░░
+#░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ 
+options:
+ 
+#
+# What did you name the Skript File?
+#
+  scriptname: AGS
+#
+ 
+ 
+#
+# Do you want players to be charged when picking up their gen?
+#
+  pickupcost: true
+#
+ 
+ 
+#
+# If the option pickupcost is enabled please specify price to pickup the first generator below.
+#
+  genonecost: 100
+#
+ 
+ 
+#
+# If the option pickupcost is enabled please specify price to pickup the second generator below.
+#
+  gentwocost: 200
+#
+ 
+ 
+#
+# If the option pickupcost is enabled please specify price to pickup the third generator below.
+#
+  genthreecost: 300
+#
+ 
+ 
+#
+# Prefix?
+#
+  prefix: &7[&dAdvancedGens&7]:&r
+#
+ 
+ 
+#
+# Please Specify the name of the first generator. This will be used to obtain the gen via commands.
+#
+  genone: coal
+#
+ 
+ 
+#
+# Please Specify the name of the second generator. This will be used to obtain the gen via commands.
+#
+  gentwo: iron
+#
+ 
+ 
+#
+# Please Specify the name of the third generator. This will be used to obtain the gen via commands.
+#
+  genthree: diamond
+#
+ 
+ 
+#
+# Set the name of the first generator that will be displayed in game.
+#
+  genonedisplay: &8&lCoal
+#
+ 
+ 
+#
+# Set the name of the second generator that will be displayed in game.
+#
+  gentwodisplay: &6&lIron
+#
+ 
+ 
+#
+# Set the name of the third generator that will be displayed in game.
+#
+  genthreedisplay: &b&lDiamond
+#
+ 
+ 
+#
+# What block should the first generator be?
+#
+  genoneblock: coal ore
+#
+ 
+ 
+#
+# What block should the second generator be?
+#
+  gentwoblock: iron ore
+#
+ 
+ 
+#
+# What block should the third generator be?
+#
+  genthreeblock: diamond ore
+#
+ 
+ 
+#
+# Should the generator have a cooldown after being broken?
+#
+  switch: true
+#
+ 
+ 
+#
+# If the option Switch is true, What block should the generator become once broken? Do not choose glass!
+#
+  genonedestroyblock: bedrock
+#
+ 
+ 
+#
+# If the option Switch is true, What block should the generator become once broken? Do not choose glass!
+#
+  gentwodestroyblock: stone
+#
+ 
+ 
+#
+# If the option Switch is true, What block should the generator become once broken? Do not choose glass!
+#
+  genthreedestroyblock: dirt
+#
+ 
+ 
+#
+# If the option Switch is true, How long should it take for the first generator to regenerate? (in seconds)
+#
+  genonecooldown: 5
+#
+ 
+ 
+#
+# If the option Switch is true, How long should it take for the second generator to regenerate? (in seconds)
+#
+  gentwocooldown: 5
+#
+ 
+ 
+#
+# If the option Switch is true, How long should it take for the third generator to regenerate? (in seconds)
+#
+  genthreecooldown: 5
+#
+ 
+#
+#
+#
+#
+ 
+ 
+ 
+#░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+#░░░█████░░░█████░░███░░░░███░███░░░░███░░█████░░███░░░██░██████░░░██████░░
+#░░██░░░██░██░░░██░████░░████░████░░████░██░░░██░████░░██░██░░░██░██░░░░░░░
+#░░██░░░░░░██░░░██░██░████░██░██░████░██░███████░██░██░██░██░░░██░░█████░░░
+#░░██░░░██░██░░░██░██░░██░░██░██░░██░░██░██░░░██░██░░████░██░░░██░░░░░░██░░
+#░░░█████░░░█████░░██░░░░░░██░██░░░░░░██░██░░░██░██░░░███░██████░░██████░░░
+#░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ 
+ 
+command /advancedgen [<text>] [<offlineplayer>] [<text>] [<integer>]:
+  executable by: players and console
+  aliases: /ag
+  trigger:
+    if player has permission "advancedgen.admin":
+      if arg 1 is set:
+        if arg 1 is "give" or "reload" or "help":
+          if arg 2 is set:
+            if arg 2 is online:
+              set {player.name} to arg-2
+              if arg 3 is set:
+                if arg 4 is set:
+                  if arg 1 is "give":
+                    if arg 3 is "{@genone}":
+                      give {player.name} arg-4 of glowing {@genoneblock} named "&r{@genonedisplay}&r&7 Generator"
+                    if arg 3 is "{@gentwo}":
+                      give {player.name} arg-4 of glowing {@gentwoblock} named "&r{@gentwodisplay}&r&7 Generator"
+                    if arg 3 is "{@genthree}":
+                      give {player.name} arg-4 of glowing {@genthreeblock} named "&r{@genthreedisplay}&r&7 Generator"
+                else:
+                  if arg 1 is "give":
+                    if arg 3 is "{@genone}":
+                      give {player.name} 1 of glowing {@genoneblock} named "&r{@genonedisplay}&r&7 Generator"
+                    if arg 3 is "{@gentwo}":
+                      give {player.name} 1 of glowing {@gentwoblock} named "&r{@gentwodisplay}&r&7 Generator"
+                    if arg 3 is "{@genthree}":
+                      give {player.name} 1 of glowing {@genthreeblock} named "&r{@genthreedisplay}&r&7 Generator"
+              else:
+                if arg 1 is "give":
+                  send "{@prefix} &c/advancedgen <give> <player> <item> <amount>" to player
+            else:
+              send "&cPlayer not found!" to player
+          else:
+            if arg 1 is "give":
+              send "{@prefix} &c/advancedgen <give> <player> <item> <amount>" to player
+        else:
+          if arg 1 is "reload":
+            make console execute command "/sk reload {@scriptname}"
+          else:
+            send "{@prefix} &c/advancedgen help" to player
+      else:
+        send "{@prefix} &c/advancedgen help" to player
+    else:
+      send "&cNo permission." to player
+ 
+ 
+#░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+#░░░██████░░███████░███░░░██░███████░██████░░░█████░░████████░░█████░░██████░░░██████░░
+#░░██░░░░░░░██░░░░░░████░░██░██░░░░░░██░░░██░██░░░██░░░░██░░░░██░░░██░██░░░██░██░░░░░░░
+#░░██░░░██░░█████░░░██░██░██░█████░░░██████░░███████░░░░██░░░░██░░░██░██████░░░█████░░░
+#░░██░░░░██░██░░░░░░██░░████░██░░░░░░██░░░██░██░░░██░░░░██░░░░██░░░██░██░░░██░░░░░░██░░
+#░░░██████░░███████░██░░░███░███████░██░░░██░██░░░██░░░░██░░░░░█████░░██░░░██░██████░░░
+#░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+ 
+ 
+ 
+on place of {@genoneblock}:
+  if player's tool is 1 of glowing {@genoneblock} named "&r{@genonedisplay}&r&7 Generator":
+    set {isgenone.%Block%} to true
+ 
+on place of {@gentwoblock}:
+  if player's tool is 1 of glowing {@gentwoblock} named "&r{@gentwodisplay}&r&7 Generator":
+    set {isgentwo.%Block%} to true
+ 
+on place of {@genthreeblock}:
+  if player's tool is 1 of glowing {@genthreeblock} named "&r{@genthreedisplay}&r&7 Generator":
+    set {isgenthree.%Block%} to true
+ 
+ 
+on left click:
+  if player is sneaking:
+    if {isgenone.%event-block%} is true:
+      if event-block is {@genonedestroyblock}: 
+        send "{@prefix} &7You cannot pick up this gen right now!" to player
+      else:
+        if {@pickupcost} is true:
+          if player's balance >= {@genonecost}:
+            remove {@genonecost} from player's balance
+            send "{@prefix} &7You have been charged &e${@genonecost} &7to pickup this generator." to player
+            set event-block to air
+            set {isgenone.%Block%} to false
+            give player 1 of glowing {@genoneblock} named "&r{@genonedisplay}&r&7 Generator"
+          else:
+            send "{@prefix} &cInsufficient Funds! &7You need &e${@genonecost} &7to pickup this generator." to player
+        else:
+          set event-block to air
+          set {isgenone.%Block%} to false
+          give player 1 of glowing {@genoneblock} named "&r{@genonedisplay}&r&7 Generator"
+    if {isgentwo.%event-block%} is true:
+      if event-block is {@gentwodestroyblock}: 
+        send "{@prefix} &7You cannot pick up this gen right now!" to player
+      else:
+        if {@pickupcost} is true:
+          if player's balance >= {@gentwocost}:
+            remove {@gentwocost} from player's balance
+            send "{@prefix} &7You have been charged &e${@gentwocost} &7to pickup this generator." to player
+            set event-block to air
+            set {isgentwo.%Block%} to false
+            give player 1 of glowing {@gentwoblock} named "&r{@gentwodisplay}&r&7 Generator"
+          else:
+            send "{@prefix} &cInsufficient Funds! &7You need &e${@gentwocost} &7to pickup this generator." to player
+        else:
+          set event-block to air
+          set {isgentwo.%Block%} to false
+          give player 1 of glowing {@gentwoblock} named "&r{@gentwodisplay}&r&7 Generator"
+    if {isgenthree.%event-block%} is true:
+      if event-block is {@genthreedestroyblock}: 
+        send "{@prefix} &7You cannot pick up this gen right now!" to player
+      else:
+        if {@pickupcost} is true:
+          if player's balance >= {@genthreecost}:
+            remove {@genthreecost} from player's balance
+            send "{@prefix} &7You have been charged &e${@genthreecost} &7to pickup this generator." to player
+            set event-block to air
+            set {isgenthree.%Block%} to false
+            give player 1 of glowing {@genthreeblock} named "&r{@genthreedisplay}&r&7 Generator"
+          else:
+            send "{@prefix} &cInsufficient Funds! &7You need &e${@genthreecost} &7to pickup this generator." to player
+        else:
+          set event-block to air
+          set {isgenthree.%Block%} to false
+          give player 1 of glowing {@genthreeblock} named "&r{@genthreedisplay}&r&7 Generator"
+ 
+ 
+on break of {@genoneblock}:
+  if {isgenone.%event-block%} is true:
+    cancel the event
+    if {@switch} is true:
+      set event-block to {@genonedestroyblock}
+      wait {@genonecooldown} seconds
+      set event-block to {@genoneblock}
+ 
+ 
+on break of {@gentwoblock}:
+  if {isgentwo.%event-block%} is true:
+    cancel the event
+    if {@switch} is true:
+      set event-block to {@gentwodestroyblock}
+      wait {@gentwocooldown} seconds
+      set event-block to {@gentwoblock}
+ 
+ 
+on break of {@genthreeblock}:
+  if {isgenthree.%event-block%} is true:
+    cancel the event
+    if {@switch} is true:
+      set event-block to {@genthreedestroyblock}
+      wait {@genthreecooldown} seconds
+      set event-block to {@genthreeblock}
+ 
+ 
+ 
+on break of {@genonedestroyblock}:
+  if {isgenone.%event-block%} is true:
+    cancel the event
+    send "{@prefix} &7You cannot mine this block now!" to player
+ 
+on break of {@gentwodestroyblock}:
+  if {isgentwo.%event-block%} is true:
+    cancel the event
+    send "{@prefix} &7You cannot mine this block now!" to player
+ 
+on break of {@genthreedestroyblock}:
+  if {isgenthree.%event-block%} is true:
+    cancel the event
+    send "{@prefix} &7You cannot mine this block now!" to player
